@@ -4,9 +4,12 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 })
 
-export async function chatWithGroq(
-  messages: Groq.Chat.ChatCompletionMessageParam[]
-): Promise<string> {
+type Message = {
+  role: "system" | "user" | "assistant"
+  content: string
+}
+
+export async function chatWithGroq(messages: Message[]): Promise<string> {
   const completion = await groq.chat.completions.create({
     messages,
     model: "llama-3.3-70b-versatile",
