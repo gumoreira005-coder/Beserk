@@ -5,8 +5,6 @@ export const dynamic = "force-dynamic";
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Sword, Eye, EyeOff, ChevronRight, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-
 type Mode = "login" | "cadastro";
 
 export default function AuthPage() {
@@ -20,41 +18,36 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
-    setSuccess("");
     setLoading(true);
 
-    try {
-      if (mode === "cadastro") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { full_name: name } },
-        });
-        if (error) throw error;
-        setSuccess("Conta criada! Iniciando sua jornada...");
-        setTimeout(() => router.push("/onboarding"), 1200);
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        router.push("/dashboard");
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Erro inesperado.";
-      setError(translateError(msg));
-    } finally {
+    if (password.length < 6) {
+      setError("A senha deve ter no mínimo 6 caracteres.");
       setLoading(false);
+      return;
     }
-  }
 
-  function translateError(msg: string) {
-    if (msg.includes("Invalid login credentials")) return "E-mail ou senha incorretos.";
-    if (msg.includes("Email not confirmed"))       return "Confirme seu e-mail antes de entrar.";
-    if (msg.includes("User already registered"))   return "Este e-mail já está cadastrado.";
-    if (msg.includes("Password should be"))        return "A senha deve ter no mínimo 6 caracteres.";
-    return msg;
+    if (mode === "cadastro") {
+      localStorage.setItem("berserk_user", JSON.stringify({ name, email }));
+      setSuccess("Conta criada! Iniciando sua jornada...");
+      setTimeout(() => router.push("/onboarding"), 1000);
+    } else {
+      const stored = localStorage.getItem("berserk_user");
+      if (!stored) {
+        setError("Conta não encontrada. Crie uma conta primeiro.");
+        setLoading(false);
+        return;
+      }
+      const user = JSON.parse(stored) as { email: string };
+      if (user.email !== email) {
+        setError("E-mail não encontrado.");
+        setLoading(false);
+        return;
+      }
+      router.push("/dashboard");
+    }
   }
 
   function switchMode(m: Mode) {
