@@ -3,7 +3,8 @@
 import { useState, useEffect, type ChangeEvent, type ReactNode } from "react";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Navbar } from "@/components/shared/Navbar";
-import { Bell, Eye, Shield, Trash2, Moon, Sun, Check, Lock } from "lucide-react";
+import { Bell, Eye, Shield, Trash2, Moon, Sun, Check, Lock, Volume2 } from "lucide-react";
+import { playClick, playSuccess, playAchievement, playFocusStart } from "@/lib/sounds";
 
 interface AppSettings {
   theme: "dark" | "light";
@@ -14,6 +15,7 @@ interface AppSettings {
   notifyStreak: boolean;
   profilePublic: boolean;
   showStats: boolean;
+  soundEnabled: boolean;
 }
 
 const DEFAULTS: AppSettings = {
@@ -25,6 +27,7 @@ const DEFAULTS: AppSettings = {
   notifyStreak: true,
   profilePublic: true,
   showStats: true,
+  soundEnabled: true,
 };
 
 const ACCENT_COLORS = [
@@ -96,6 +99,7 @@ export default function ConfigPage() {
   function handleSave() {
     localStorage.setItem("berserk_settings", JSON.stringify(settings));
     setSaved(true);
+    playSuccess();
     setTimeout(() => setSaved(false), 2000);
   }
 
@@ -185,6 +189,20 @@ export default function ConfigPage() {
             </Row>
             <Row label="Sequência" description="Lembrete diário para manter sua sequência">
               <Toggle checked={settings.notifyStreak} onChange={() => set("notifyStreak", !settings.notifyStreak)} />
+            </Row>
+          </Section>
+
+          {/* Som */}
+          <Section title="Som">
+            <Row label="Sons do sistema" description="Efeitos sonoros para ações e notificações">
+              <Toggle checked={settings.soundEnabled} onChange={() => { set("soundEnabled", !settings.soundEnabled); playClick(); }} />
+            </Row>
+            <Row label="Testar sons" description="Ouça uma prévia dos sons">
+              <div className="flex gap-2">
+                <button onClick={playClick} className="px-3 py-1.5 rounded-lg text-xs bg-secondary text-muted-foreground hover:text-foreground transition-colors">Click</button>
+                <button onClick={playAchievement} className="px-3 py-1.5 rounded-lg text-xs bg-secondary text-muted-foreground hover:text-foreground transition-colors">Conquista</button>
+                <button onClick={playFocusStart} className="px-3 py-1.5 rounded-lg text-xs bg-secondary text-muted-foreground hover:text-foreground transition-colors">Foco</button>
+              </div>
             </Row>
           </Section>
 
