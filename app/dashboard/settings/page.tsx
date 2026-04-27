@@ -153,19 +153,6 @@ export default function SettingsPage() {
               {errors.username && <p className="text-destructive text-xs mt-1">{errors.username}</p>}
             </div>
 
-            {/* Nome real */}
-            <div>
-              <label className="text-xs font-game uppercase tracking-widest text-muted-foreground block mb-1.5">
-                Nome real
-              </label>
-              <input
-                value={user.name}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setUser((u: BerserkUser) => ({ ...u, name: e.target.value }))}
-                placeholder="Seu nome"
-                className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-              />
-            </div>
-
             {/* Email (read-only) */}
             <div>
               <label className="text-xs font-game uppercase tracking-widest text-muted-foreground block mb-1.5">
