@@ -6,6 +6,8 @@ import { Sidebar } from "@/components/shared/Sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Play, Pause, RotateCcw, SkipForward } from "lucide-react"
+import { recordFocusSession } from "@/lib/gameData"
+import { playFocusEnd, playFocusStart } from "@/lib/sounds"
 
 const MODES = [
   { label: "Foco", duration: 25 * 60, strokeColor: "hsl(var(--primary))" },
@@ -37,7 +39,11 @@ export default function FocusPage() {
 
   const skip = useCallback(() => {
     const next = (modeIndex + 1) % MODES.length
-    if (modeIndex === 0) setSessions((s) => s + 1)
+    if (modeIndex === 0) {
+      setSessions((s: number) => s + 1)
+      recordFocusSession(25)
+      playFocusEnd()
+    }
     handleModeChange(next)
   }, [modeIndex])
 
@@ -48,11 +54,15 @@ export default function FocusPage() {
   useEffect(() => {
     if (!isRunning) return
     const interval = setInterval(() => {
-      setTimeLeft((t) => {
+      setTimeLeft((t: number) => {
         if (t <= 1) {
           clearInterval(interval)
           setIsRunning(false)
-          if (modeIndex === 0) setSessions((s) => s + 1)
+          if (modeIndex === 0) {
+            setSessions((s: number) => s + 1)
+            recordFocusSession(25)
+            playFocusEnd()
+          }
           return 0
         }
         return t - 1
@@ -143,7 +153,7 @@ export default function FocusPage() {
               <Button
                 size="lg"
                 className="w-36 font-heading tracking-widest uppercase"
-                onClick={() => setIsRunning((r) => !r)}
+                onClick={() => { setIsRunning((r: boolean) => { if (!r) playFocusStart(); return !r; }) }}
               >
                 {isRunning ? (
                   <>
