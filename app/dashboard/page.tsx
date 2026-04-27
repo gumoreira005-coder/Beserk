@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Navbar } from "@/components/shared/Navbar"
 import { Sidebar } from "@/components/shared/Sidebar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,6 +23,18 @@ const recentActivity = [
 ]
 
 export default function DashboardPage() {
+  const [userName, setUserName] = useState("Guerreiro")
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("berserk_user")
+      if (stored) {
+        const user = JSON.parse(stored) as { name: string }
+        if (user.name) setUserName(user.name)
+      }
+    } catch {}
+  }, [])
+
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar />
@@ -32,7 +47,7 @@ export default function DashboardPage() {
               Dashboard
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
-              Bem-vindo de volta, <span className="text-accent">Guerreiro</span>.
+              Bem-vindo de volta, <span className="text-accent">{userName}</span>.
             </p>
           </div>
 

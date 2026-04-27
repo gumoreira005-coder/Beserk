@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutDashboard, Timer, BarChart2, Sword, Settings } from "lucide-react"
@@ -15,6 +16,17 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const [userName, setUserName] = useState("Guerreiro")
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("berserk_user")
+      if (stored) {
+        const user = JSON.parse(stored) as { name: string }
+        if (user.name) setUserName(user.name)
+      }
+    } catch {}
+  }, [])
 
   return (
     <aside className="w-56 border-r border-border bg-card flex flex-col shrink-0 min-h-screen">
@@ -56,10 +68,10 @@ export function Sidebar() {
       <div className="p-4 border-t border-border">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-black font-heading shrink-0">
-            G
+            {userName.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-medium text-foreground truncate">Guerreiro</p>
+            <p className="text-xs font-medium text-foreground truncate">{userName}</p>
             <p className="text-xs text-accent truncate font-heading">Nível 7</p>
           </div>
         </div>
