@@ -36,7 +36,7 @@ export default function HomePage() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg" className="font-heading tracking-widest uppercase glow-primary">
-            <Link href="/onboarding">
+            <Link href="/auth">
               Iniciar Jornada
               <ChevronRight className="w-4 h-4 ml-2" />
             </Link>
@@ -47,7 +47,7 @@ export default function HomePage() {
             variant="outline"
             className="font-heading tracking-widest uppercase"
           >
-            <Link href="/dashboard">Acessar Dashboard</Link>
+            <Link href="/auth">Acessar Dashboard</Link>
           </Button>
         </div>
       </div>
