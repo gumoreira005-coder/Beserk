@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Timer, BarChart2, Sword, Settings, UserCircle } from "lucide-react"
+import { LayoutDashboard, Timer, BarChart2, Sword, Settings, UserCircle, Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: "/focus", label: "Foco", icon: Timer },
   { href: "/dashboard/stats", label: "Atributos", icon: BarChart2 },
   { href: "/dashboard/challenges", label: "Desafios", icon: Sword },
+  { href: "/dashboard/ranking", label: "Ranking", icon: Trophy },
   { href: "/dashboard/settings", label: "Perfil", icon: UserCircle },
   { href: "/dashboard/config", label: "Configurações", icon: Settings },
 ]
