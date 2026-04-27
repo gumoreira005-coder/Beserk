@@ -18,6 +18,14 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  type Account = { name: string; email: string; password: string };
+
+  function getAccounts(): Account[] {
+    try {
+      return JSON.parse(localStorage.getItem("berserk_accounts") || "[]") as Account[];
+    } catch { return []; }
+  }
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
@@ -30,22 +38,33 @@ export default function AuthPage() {
     }
 
     if (mode === "cadastro") {
+      const accounts = getAccounts();
+      if (accounts.find((a) => a.email === email)) {
+        setError("Este e-mail já está cadastrado. Entre na sua conta.");
+        setLoading(false);
+        return;
+      }
+      const account: Account = { name, email, password };
+      accounts.push(account);
+      localStorage.setItem("berserk_accounts", JSON.stringify(accounts));
       localStorage.setItem("berserk_user", JSON.stringify({ name, email }));
       setSuccess("Conta criada! Iniciando sua jornada...");
       setTimeout(() => router.push("/onboarding"), 1000);
     } else {
-      const stored = localStorage.getItem("berserk_user");
-      if (!stored) {
-        setError("Conta não encontrada. Crie uma conta primeiro.");
+      const accounts = getAccounts();
+      const account = accounts.find((a) => a.email === email);
+      if (!account) {
+        setError("E-mail não encontrado. Crie uma conta primeiro.");
         setLoading(false);
         return;
       }
-      const user = JSON.parse(stored) as { email: string };
-      if (user.email !== email) {
-        setError("E-mail não encontrado.");
+      if (account.password !== password) {
+        setError("Senha incorreta.");
         setLoading(false);
         return;
       }
+      // Restore session
+      localStorage.setItem("berserk_user", JSON.stringify({ name: account.name, email: account.email }));
       router.push("/dashboard");
     }
   }
