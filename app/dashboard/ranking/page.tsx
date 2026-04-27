@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Navbar } from "@/components/shared/Navbar";
-import { Trophy, Flame, Zap, Crown, TrendingUp, Circle } from "lucide-react";
+import { Trophy, Flame, Zap, Crown, TrendingUp, Circle, Users } from "lucide-react";
 import { loadProgress, xpToLevel, type GameProgress } from "@/lib/gameData";
+import { fetchLeaderboard, type SupabaseProfile } from "@/lib/syncProfile";
 
 // ── Fake player pool ─────────────────────────────────────────────────────────
 const NAMES = [
@@ -91,20 +92,59 @@ function rankLabel(pos: number) {
   return null;
 }
 
+type RankEntry = {
+  id: string; name: string; xp: number; level: number; cls: WarriorClass;
+  online: boolean; avatar: string; isMe: boolean; isReal: boolean;
+};
+
 export default function RankingPage() {
   const [progress, setProgress] = useState<GameProgress | null>(null);
   const [players, setPlayers] = useState<FakePlayer[]>([]);
+  const [realPlayers, setRealPlayers] = useState<RankEntry[]>([]);
   const [feed, setFeed] = useState<FeedEntry[]>([]);
   const [pulse, setPulse] = useState<string | null>(null);
   const tickRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setProgress(loadProgress());
-    const fakes = generateFakePlayers();
-    setPlayers(fakes);
+    const prog = loadProgress();
+    setProgress(prog);
+
+    // Load real players from Supabase
+    let myEmail = "";
+    try {
+      const u = JSON.parse(localStorage.getItem("berserk_user") || "{}") as { email?: string };
+      myEmail = u.email ?? "";
+    } catch { /* ignore */ }
+
+    fetchLeaderboard(50).then((profiles: SupabaseProfile[]) => {
+      const converted: RankEntry[] = profiles.map((p) => ({
+        id: `real_${p.username}`,
+        name: p.nickname || p.username,
+        xp: p.xp,
+        level: p.level,
+        cls: classFromLevel(p.level),
+        online: false,
+        avatar: AVATAR_COLORS[Math.abs(p.username.charCodeAt(0) - 97) % AVATAR_COLORS.length],
+        isMe: myEmail ? p.email === myEmail : false,
+        isReal: true,
+      }));
+      setRealPlayers(converted);
+
+      // If no real profile for current user yet, mark local one
+      const hasMe = converted.some((p) => p.isMe);
+      if (!hasMe) {
+        const fakes = generateFakePlayers();
+        setPlayers(fakes);
+      } else {
+        // Pad with fakes up to 15 total if needed
+        const need = Math.max(0, 15 - converted.length);
+        setPlayers(generateFakePlayers().slice(0, need));
+      }
+    });
 
     function tick() {
       setPlayers((prev: FakePlayer[]) => {
+        if (prev.length === 0) return prev;
         const copy = [...prev];
         const idx = Math.floor(Math.random() * copy.length);
         const gain = Math.floor(Math.random() * 120 + 30);
@@ -117,7 +157,6 @@ export default function RankingPage() {
         setPulse(p.id);
         setTimeout(() => setPulse(null), 800);
 
-        // Feed entry
         const actionFn = FEED_ACTIONS[Math.floor(Math.random() * FEED_ACTIONS.length)];
         const entry: FeedEntry = {
           id: `${Date.now()}`,
@@ -125,7 +164,6 @@ export default function RankingPage() {
           ...actionFn(p.name.split(" ")[0], gain),
         };
         setFeed((f: FeedEntry[]) => [entry, ...f].slice(0, 8));
-
         return copy;
       });
 
@@ -137,7 +175,7 @@ export default function RankingPage() {
     return () => { if (tickRef.current) clearTimeout(tickRef.current); };
   }, []);
 
-  if (!progress || players.length === 0) return null;
+  if (!progress) return null;
 
   // Merge real user into ranking
   const userName = (() => {
@@ -147,12 +185,16 @@ export default function RankingPage() {
     } catch { return "Você"; }
   })();
 
-  type RankEntry = { id: string; name: string; xp: number; level: number; cls: WarriorClass; online: boolean; avatar: string; isMe: boolean; };
+  const hasRealMe = realPlayers.some((p: RankEntry) => p.isMe);
 
+  // Combine: real players + fake padding + (local user if not already in real list)
   const allPlayers: RankEntry[] = [
-    ...players.map((p: FakePlayer) => ({ ...p, isMe: false })),
-    {
-      id: "me",
+    ...realPlayers,
+    ...players.map((p: FakePlayer) => ({
+      ...p, isMe: false, isReal: false,
+    })),
+    ...(!hasRealMe ? [{
+      id: "me_local",
       name: userName,
       xp: progress.xp,
       level: progress.level,
@@ -160,10 +202,12 @@ export default function RankingPage() {
       online: true,
       avatar: "bg-primary",
       isMe: true,
-    },
+      isReal: false,
+    }] : []),
   ].sort((a: RankEntry, b: RankEntry) => b.xp - a.xp);
 
   const myRank = allPlayers.findIndex((p: RankEntry) => p.isMe) + 1;
+  const realCount = realPlayers.length;
   const top3 = allPlayers.slice(0, 3);
   const rest = allPlayers.slice(3);
   const onlineCount = allPlayers.filter((p) => p.online).length;
@@ -194,6 +238,12 @@ export default function RankingPage() {
                 <Circle className="w-2 h-2 fill-emerald-400 text-emerald-400" />
                 <span className="text-emerald-400 text-xs font-heading">{onlineCount} online</span>
               </div>
+              {realCount > 0 && (
+                <div className="flex items-center gap-1.5 bg-blue-950/40 border border-blue-700/40 rounded-lg px-3 py-1.5">
+                  <Users className="w-3 h-3 text-blue-400" />
+                  <span className="text-blue-400 text-xs font-heading font-black">{realCount} reais</span>
+                </div>
+              )}
             </div>
           </div>
 
