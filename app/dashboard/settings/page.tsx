@@ -4,8 +4,6 @@ import { useState, useEffect, useRef, type ChangeEvent } from "react";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Navbar } from "@/components/shared/Navbar";
 import { Camera, Check, Pencil, Share2, Copy, ExternalLink } from "lucide-react";
-import { loadProgress } from "@/lib/gameData";
-import { encodeProfile } from "@/lib/shareProfile";
 
 interface BerserkUser {
   name: string;
@@ -31,9 +29,11 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState(false);
 
   function handleShare() {
-    const progress = loadProgress();
-    const encoded = encodeProfile(progress, user.name, user.nickname || user.name);
-    const url = `${window.location.origin}/perfil?p=${encoded}`;
+    const username =
+      user.username ||
+      user.email.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "") ||
+      "guerreiro";
+    const url = `${window.location.origin}/perfil/${username}`;
     setShareUrl(url);
   }
 
