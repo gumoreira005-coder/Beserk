@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
+import type { ReactNode } from "react"
 import "./globals.css"
 import { Inter, Space_Grotesk, Rajdhani } from "next/font/google"
+import { MusicPlayer } from "@/components/shared/MusicPlayer"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const space = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" })
@@ -11,11 +13,12 @@ export const metadata: Metadata = {
   description: "Forge your will. Conquer your limits.",
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-br" className={`${inter.variable} ${space.variable} ${rajdhani.variable}`}>
       <body className="bg-void text-steel antialiased">
         {children}
+        <MusicPlayer />
       </body>
     </html>
   )
