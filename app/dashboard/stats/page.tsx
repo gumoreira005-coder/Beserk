@@ -83,7 +83,7 @@ export default function StatsPage() {
     value: scores[i],
   }));
 
-  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  const avg = Math.round((scores as number[]).reduce((a: number, b: number) => a + b, 0) / scores.length);
   const warrior = getWarriorClass(avg);
   const circumference = 2 * Math.PI * 60;
 
@@ -160,19 +160,19 @@ export default function StatsPage() {
               <div className="grid grid-cols-3 gap-3 mt-6">
                 <div className="bg-void rounded-lg p-3 text-center">
                   <p className="text-gold font-titles font-bold text-xl leading-none">
-                    {scores.filter((s) => s >= 70).length}
+                    {scores.filter((s: number) => s >= 70).length}
                   </p>
                   <p className="text-iron text-xs mt-1">Fortes</p>
                 </div>
                 <div className="bg-void rounded-lg p-3 text-center">
                   <p className="text-yellow-500 font-titles font-bold text-xl leading-none">
-                    {scores.filter((s) => s >= 40 && s < 70).length}
+                    {scores.filter((s: number) => s >= 40 && s < 70).length}
                   </p>
                   <p className="text-iron text-xs mt-1">Médios</p>
                 </div>
                 <div className="bg-void rounded-lg p-3 text-center">
                   <p className="text-berserk font-titles font-bold text-xl leading-none">
-                    {scores.filter((s) => s < 40).length}
+                    {scores.filter((s: number) => s < 40).length}
                   </p>
                   <p className="text-iron text-xs mt-1">Fracos</p>
                 </div>
@@ -252,7 +252,7 @@ export default function StatsPage() {
                     color: "#ECF0F1",
                     fontSize: "12px",
                   }}
-                  formatter={(v: number) => [`${v}/100`, "Score Médio"]}
+                  formatter={(v) => [`${String(v)}/100`, "Score Médio"]}
                   cursor={{ stroke: "#2A2A4A" }}
                 />
                 <Line
