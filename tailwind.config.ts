@@ -10,48 +10,48 @@ const config: Config = {
     extend: {
       colors: {
         // ── Paleta Berserk ──────────────────────────────
-        void:    "#0A0A0F",   // Fundo Profundo
-        surface: "#1A1A2E",   // Painéis
-        berserk: "#C0392B",   // Cor de Ação (Vermelho)
-        blood:   "#E74C3C",   // Alertas
-        steel:   "#ECF0F1",   // Texto Principal
-        iron:    "#95A5A6",   // Texto Secundário
-        gold:    "#F39C12",   // Conquistas
+        void:    "rgb(var(--void)    / <alpha-value>)",
+        surface: "rgb(var(--surface) / <alpha-value>)",
+        berserk: "rgb(var(--berserk) / <alpha-value>)",
+        blood:   "rgb(var(--blood)   / <alpha-value>)",
+        steel:   "rgb(var(--steel)   / <alpha-value>)",
+        iron:    "rgb(var(--iron)    / <alpha-value>)",
+        gold:    "rgb(var(--gold)    / <alpha-value>)",
 
-        // ── Aliases para compatibilidade com componentes shadcn ──
-        background: "#0A0A0F",
-        foreground: "#ECF0F1",
+        // ── Aliases semânticos ──────────────────────────
+        background: "rgb(var(--background) / <alpha-value>)",
+        foreground: "rgb(var(--foreground) / <alpha-value>)",
         card: {
-          DEFAULT:    "#1A1A2E",
-          foreground: "#ECF0F1",
+          DEFAULT:    "rgb(var(--card)             / <alpha-value>)",
+          foreground: "rgb(var(--card-foreground)  / <alpha-value>)",
         },
         popover: {
-          DEFAULT:    "#1A1A2E",
-          foreground: "#ECF0F1",
+          DEFAULT:    "rgb(var(--popover)           / <alpha-value>)",
+          foreground: "rgb(var(--popover-foreground)/ <alpha-value>)",
         },
         primary: {
-          DEFAULT:    "#C0392B",
-          foreground: "#ECF0F1",
+          DEFAULT:    "rgb(var(--primary)           / <alpha-value>)",
+          foreground: "rgb(var(--primary-foreground)/ <alpha-value>)",
         },
         secondary: {
-          DEFAULT:    "#16162A",
-          foreground: "#ECF0F1",
+          DEFAULT:    "rgb(var(--secondary)           / <alpha-value>)",
+          foreground: "rgb(var(--secondary-foreground)/ <alpha-value>)",
         },
         muted: {
-          DEFAULT:    "#16162A",
-          foreground: "#95A5A6",
+          DEFAULT:    "rgb(var(--muted)           / <alpha-value>)",
+          foreground: "rgb(var(--muted-foreground)/ <alpha-value>)",
         },
         accent: {
-          DEFAULT:    "#F39C12",
-          foreground: "#0A0A0F",
+          DEFAULT:    "rgb(var(--accent)           / <alpha-value>)",
+          foreground: "rgb(var(--accent-foreground)/ <alpha-value>)",
         },
         destructive: {
-          DEFAULT:    "#E74C3C",
-          foreground: "#ECF0F1",
+          DEFAULT:    "rgb(var(--destructive)           / <alpha-value>)",
+          foreground: "rgb(var(--destructive-foreground)/ <alpha-value>)",
         },
-        border: "#2A2A4A",
-        input:  "#16162A",
-        ring:   "#C0392B",
+        border: "rgb(var(--border) / <alpha-value>)",
+        input:  "rgb(var(--input)  / <alpha-value>)",
+        ring:   "rgb(var(--ring)   / <alpha-value>)",
       },
       fontFamily: {
         titles: ["var(--font-space)"],

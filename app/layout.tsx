@@ -13,10 +13,21 @@ export const metadata: Metadata = {
   description: "Forge your will. Conquer your limits.",
 }
 
+const themeInitScript = `
+try {
+  var t = JSON.parse(localStorage.getItem('berserk_theme') || '{}');
+  if (t.mode === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  document.documentElement.setAttribute('data-accent', t.accent || 'red');
+} catch(e) {}
+`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-br" className={`${inter.variable} ${space.variable} ${rajdhani.variable}`}>
-      <body className="bg-void text-steel antialiased">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body>
         {children}
         <MusicPlayer />
       </body>

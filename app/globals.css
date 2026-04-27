@@ -3,9 +3,83 @@
 @tailwind utilities;
 
 @layer base {
+  /* ── Dark theme (default) + Red accent ───────── */
+  :root {
+    --background:             10 10 15;
+    --foreground:             236 240 241;
+    --card:                   26 26 46;
+    --card-foreground:        236 240 241;
+    --popover:                26 26 46;
+    --popover-foreground:     236 240 241;
+    --primary:                192 57 43;
+    --primary-foreground:     236 240 241;
+    --secondary:              22 22 42;
+    --secondary-foreground:   236 240 241;
+    --muted:                  22 22 42;
+    --muted-foreground:       149 165 166;
+    --accent:                 243 156 18;
+    --accent-foreground:      10 10 15;
+    --destructive:            231 76 60;
+    --destructive-foreground: 236 240 241;
+    --border:                 42 42 74;
+    --input:                  22 22 42;
+    --ring:                   192 57 43;
+    --void:                   10 10 15;
+    --surface:                26 26 46;
+    --steel:                  236 240 241;
+    --iron:                   149 165 166;
+    --gold:                   243 156 18;
+    --blood:                  231 76 60;
+    --berserk:                192 57 43;
+  }
+
+  /* ── Light theme ─────────────────────────────── */
+  [data-theme="light"] {
+    --background:             248 249 250;
+    --foreground:             26 26 46;
+    --card:                   255 255 255;
+    --card-foreground:        26 26 46;
+    --popover:                255 255 255;
+    --popover-foreground:     26 26 46;
+    --primary-foreground:     255 255 255;
+    --secondary:              233 236 239;
+    --secondary-foreground:   26 26 46;
+    --muted:                  233 236 239;
+    --muted-foreground:       108 117 125;
+    --accent-foreground:      255 255 255;
+    --destructive:            220 53 69;
+    --destructive-foreground: 255 255 255;
+    --border:                 222 226 230;
+    --input:                  233 236 239;
+    --void:                   248 249 250;
+    --surface:                255 255 255;
+    --steel:                  26 26 46;
+    --iron:                   108 117 125;
+    --blood:                  220 53 69;
+  }
+
+  /* ── Accent colours ──────────────────────────── */
+  [data-accent="blue"] {
+    --primary: 41 128 185;
+    --ring:    41 128 185;
+    --berserk: 41 128 185;
+  }
+
+  [data-accent="green"] {
+    --primary: 39 174 96;
+    --ring:    39 174 96;
+    --berserk: 39 174 96;
+  }
+
+  [data-accent="purple"] {
+    --primary: 142 68 173;
+    --ring:    142 68 173;
+    --berserk: 142 68 173;
+  }
+
   * {
     @apply box-border;
-    border-color: #2A2A4A;
+    border-color: rgb(var(--border));
   }
 
   html {
@@ -13,7 +87,9 @@
   }
 
   body {
-    @apply bg-void text-steel antialiased;
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    @apply antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -23,9 +99,9 @@
 
   /* ── Scrollbar ───────────────────────────────── */
   ::-webkit-scrollbar        { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track  { background: #0A0A0F; }
-  ::-webkit-scrollbar-thumb  { background: #2A2A4A; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #95A5A6; }
+  ::-webkit-scrollbar-track  { background: rgb(var(--background)); }
+  ::-webkit-scrollbar-thumb  { background: rgb(var(--border)); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgb(var(--iron)); }
 }
 
 @layer utilities {
@@ -33,20 +109,22 @@
 
   /* ── Glows ───────────────────────────────────── */
   .glow-berserk {
-    box-shadow: 0 0 20px rgba(192, 57, 43, 0.35);
+    box-shadow: 0 0 20px rgb(var(--berserk) / 0.35);
   }
 
   .glow-gold {
-    box-shadow: 0 0 20px rgba(243, 156, 18, 0.35);
+    box-shadow: 0 0 20px rgb(var(--gold) / 0.35);
   }
 
   .border-glow {
-    border-color: rgba(192, 57, 43, 0.5);
-    box-shadow: 0 0 8px rgba(192, 57, 43, 0.2);
+    border-color: rgb(var(--berserk) / 0.5);
+    box-shadow: 0 0 8px rgb(var(--berserk) / 0.2);
   }
 
   /* ── Surface card ────────────────────────────── */
   .card-surface {
-    @apply bg-surface border border-[#2A2A4A] rounded-lg;
+    background-color: rgb(var(--surface));
+    border: 1px solid rgb(var(--border));
+    border-radius: 0.5rem;
   }
 }
