@@ -38,7 +38,9 @@ export function Navbar() {
   }, [])
 
   function handleLogout() {
+    // Remove only the session — progress data is preserved
     localStorage.removeItem("berserk_user")
+    localStorage.removeItem("berserk_onboarding")
     router.push("/auth")
   }
 
