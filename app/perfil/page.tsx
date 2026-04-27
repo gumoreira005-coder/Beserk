@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { HexRadarChart } from "@/components/charts/HexRadarChart";
 import {
@@ -43,7 +43,7 @@ function SharedAt({ ts }: { ts: number }) {
   );
 }
 
-export default function PerfilPage() {
+function PerfilPageInner() {
   const params = useSearchParams();
   const [profile, setProfile] = useState<SharedProfile | null>(null);
   const [invalid, setInvalid] = useState(false);
@@ -237,5 +237,17 @@ export default function PerfilPage() {
 
       </main>
     </div>
+  );
+}
+
+export default function PerfilPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <PerfilPageInner />
+    </Suspense>
   );
 }
