@@ -3,7 +3,9 @@
 import { useState, useEffect, useRef, type ChangeEvent } from "react";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Navbar } from "@/components/shared/Navbar";
-import { Camera, Check, Pencil } from "lucide-react";
+import { Camera, Check, Pencil, Share2, Copy, ExternalLink } from "lucide-react";
+import { loadProgress } from "@/lib/gameData";
+import { encodeProfile } from "@/lib/shareProfile";
 
 interface BerserkUser {
   name: string;
@@ -25,6 +27,23 @@ export default function SettingsPage() {
   });
   const [saved, setSaved] = useState(false);
   const [errors, setErrors] = useState<Partial<BerserkUser>>({});
+  const [shareUrl, setShareUrl] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  function handleShare() {
+    const progress = loadProgress();
+    const encoded = encodeProfile(progress, user.name, user.nickname || user.name);
+    const url = `${window.location.origin}/perfil?p=${encoded}`;
+    setShareUrl(url);
+  }
+
+  function handleCopy() {
+    if (!shareUrl) return;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   useEffect(() => {
     try {
@@ -115,6 +134,43 @@ export default function SettingsPage() {
                 <Pencil className="w-3 h-3" /> Alterar foto
               </button>
             </div>
+          </div>
+
+          {/* Compartilhar Perfil */}
+          <div className="p-6 bg-card border border-border rounded-xl space-y-4 mb-5">
+            <div className="flex items-center gap-2">
+              <Share2 className="w-4 h-4 text-accent" />
+              <p className="text-foreground font-heading font-black text-sm uppercase tracking-widest">Compartilhar Perfil</p>
+            </div>
+            <p className="text-muted-foreground text-sm">
+              Gere um link com um snapshot do seu perfil atual. Qualquer pessoa com o link consegue visualizar seus atributos, nível e estatísticas.
+            </p>
+
+            {!shareUrl ? (
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-2 bg-accent/10 border border-accent/30 text-accent font-heading font-black text-xs uppercase tracking-widest px-4 py-2.5 rounded-lg hover:bg-accent/20 transition-colors"
+              >
+                <Share2 className="w-3.5 h-3.5" /> Gerar Link do Perfil
+              </button>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 bg-background border border-border rounded-lg px-3 py-2">
+                  <span className="flex-1 text-xs text-muted-foreground truncate font-mono">{shareUrl}</span>
+                  <button onClick={handleCopy} className={`shrink-0 flex items-center gap-1 text-xs font-heading font-black transition-colors ${ copied ? "text-green-400" : "text-accent hover:text-accent/80" }`}>
+                    {copied ? <><Check className="w-3 h-3" /> Copiado!</> : <><Copy className="w-3 h-3" /> Copiar</>}
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  <a href={shareUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    <ExternalLink className="w-3 h-3" /> Ver como outros veem
+                  </a>
+                  <button onClick={handleShare} className="text-xs text-muted-foreground hover:text-foreground transition-colors ml-auto">
+                    ↺ Atualizar snapshot
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Campos */}
