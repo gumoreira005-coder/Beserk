@@ -8,17 +8,25 @@ import { Button } from "@/components/ui/button"
 export function Navbar() {
   const router = useRouter()
   const [userName, setUserName] = useState("Guerreiro")
+  const [avatar, setAvatar] = useState("")
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  function loadUser() {
     try {
       const stored = localStorage.getItem("berserk_user")
       if (stored) {
-        const user = JSON.parse(stored) as { name: string; email: string }
-        if (user.name) setUserName(user.name)
+        const user = JSON.parse(stored) as { name: string; nickname?: string; avatar?: string }
+        setUserName(user.nickname || user.name || "Guerreiro")
+        setAvatar(user.avatar || "")
       }
     } catch {}
+  }
+
+  useEffect(() => {
+    loadUser()
+    window.addEventListener("berserk_user_updated", loadUser)
+    return () => window.removeEventListener("berserk_user_updated", loadUser)
   }, [])
 
   useEffect(() => {
@@ -55,9 +63,12 @@ export function Navbar() {
         <div className="relative" ref={ref}>
           <button
             onClick={() => setOpen(!open)}
-            className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-black font-heading hover:opacity-80 transition-opacity"
+            className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-black font-heading hover:opacity-80 transition-opacity overflow-hidden"
           >
-            {initial}
+            {avatar
+              ? <img src={avatar} alt="avatar" className="w-full h-full object-cover" />
+              : initial
+            }
           </button>
 
           {open && (
