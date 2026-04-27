@@ -16,9 +16,16 @@ export function MusicPlayer() {
     if (!audio) return;
     audio.volume = volume;
     audio.loop = true;
-    const onCanPlay = () => setReady(true);
-    audio.addEventListener("canplaythrough", onCanPlay);
-    return () => audio.removeEventListener("canplaythrough", onCanPlay);
+
+    const tryAutoPlay = () => {
+      setReady(true);
+      audio.play()
+        .then(() => { setPlaying(true); setExpanded(true); })
+        .catch(() => {});
+    };
+
+    audio.addEventListener("canplaythrough", tryAutoPlay, { once: true });
+    return () => audio.removeEventListener("canplaythrough", tryAutoPlay);
   }, []);
 
   useEffect(() => {
