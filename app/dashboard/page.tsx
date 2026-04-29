@@ -10,6 +10,7 @@ import {
   loadProgress, fmtMinutes, ATTRIBUTE_NAMES, UPDATE_EVENT,
   type GameProgress, type ActivityEntry,
 } from "@/lib/gameData"
+import { GlobalActivity } from "@/components/dashboard/GlobalActivity"
 
 function buildRadarData(p: GameProgress) {
   return ATTRIBUTE_NAMES.map((name) => ({ attribute: name, value: p.attributes[name] }))
@@ -163,6 +164,9 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Global Activity */}
+          <GlobalActivity />
         </main>
       </div>
     </div>
