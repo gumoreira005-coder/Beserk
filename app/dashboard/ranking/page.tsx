@@ -97,6 +97,18 @@ type RankEntry = {
   online: boolean; avatar: string; isMe: boolean; isReal: boolean;
 };
 
+const JAMES: RankEntry = {
+  id: "james_salada_de_fruta",
+  name: "James o salada de fruta",
+  xp: 100_347,
+  level: 22,
+  cls: "Lenda",
+  online: true,
+  avatar: "bg-amber-500",
+  isMe: false,
+  isReal: true,
+};
+
 export default function RankingPage() {
   const [progress, setProgress] = useState<GameProgress | null>(null);
   const [players, setPlayers] = useState<FakePlayer[]>([]);
@@ -189,6 +201,7 @@ export default function RankingPage() {
 
   // Combine: real players + fake padding + (local user if not already in real list)
   const allPlayers: RankEntry[] = [
+    JAMES,
     ...realPlayers,
     ...players.map((p: FakePlayer) => ({
       ...p, isMe: false, isReal: false,
